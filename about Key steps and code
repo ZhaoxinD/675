@@ -1,0 +1,81 @@
+ 
+Install JDK, JRE
+sudo apt-get update
+sudo apt-get install openjdk-8-jdk-headless default-jre ssh rsync
+readlink -f /usr/bin/java | sed "s:bin/java::"
+Install Hadoop
+wget https://downloads.apache.org/hadoop/common/hadoop-2.10.1/hadoop-
+2.10.1.tar.gz
+tar -xvzf hadoop-2.10.1.tar.gz
+mv hadoop-2.10.1.tar.gz hadoop
+Edit Confifigurations
+vim ./.bashrc
+Insert:
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export PATH=$PATH:$HADOOP_PREFIX/bin
+vim ./hadoop/etc/hadoop/hadoop-env.sh
+Insert:
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+vim ./hadoop/etc/hadoop/core-site.xml
+Insert:
+<property>
+<name>fs.default.name</name>
+<value>hdfs://localhost:1234</value>
+</property>
+vim ./hadoop/etc/hadoop/hdfs-site.xml
+Insert:
+<property>
+<name>dfs.replication</name>
+<value>1</value>
+</property>
+ 
+ 
+cp ./hadoop/etc/hadoop/mapred-site.xml.template
+./hadoop/etc/hadoop/mapred•site.xml
+vim ./hadoop/etc/hadoop/mapred-site.xml
+Insert:
+<property>
+<name>mapreduce.framework.name</name>
+<value>yarn</value>
+</property>
+vim ./hadoop/etc/hadoop/yarn-site.xml
+<property>
+<name>yarn.nodemanager.aux-services</name>
+<value>mapreduce_shuffle</value>
+</property>
+SSH Key
+ssh-keygen -t rsa -P '' -f ./.ssh/id_rsa
+cat ./.ssh/id_rsa.pub >> ./.ssh/authorized_keys
+source ~/.bashrc
+Start Hadoop
+./sbin/start-dfs.sh
+./sbin/start-yarn.sh
+jps
+Install Hive
+wget https://archive.apache.org/dist/hive/stable/apache-hive-1.2.2-bin.tar.gz
+tar -xvzf apache-hive-1.2.2-bin.tar.gz
+mv apache-hive-1.2.2-bin hive
+vim ./.bashrc
+Insert:
+export HIVE_HOME=/home/hadoop/hive
+export PATH=$PATH:$HIVE_HOME/bin
+ 
+ 
+source ~/.bashrc
+cp ./hive/conf/hive-env.sh.template ./hive/conf/hive-env.sh
+vim ./hive/conf/hive-env.sh
+Insert:
+HADOOP_HOME=/home/hadoop/hadoop
+hive
+Install Pig
+wget https://downloads.apache.org/pig/pig-0.17.0/pig-0.17.0.tar.gz
+tar -xvzf pig-0.17.0.tar.gz
+mv pig-0.17.0.tar.gz pig
+vim ~/.bashrc
+source ~/.bashrc
+Insert:
+export PIG_HOME = /home/Hadoop/Pig
+export PATH = $PATH:/home/Hadoop/pig/bin
+export PIG_CLASSPATH = $HADOOP_HOME/conf
+pig -x local
+
